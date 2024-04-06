@@ -81,7 +81,7 @@ main {
   height: 100vh;
   background-color: #fe6f0f;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 550px) {
   .media-info-msg {
     display: none;
   }
