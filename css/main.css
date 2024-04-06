@@ -58,7 +58,7 @@ main {
   border: 1px solid white;
 } */
 .write-btn {
-  background-color: #fe6f0f;
+  background-color: var(--button-primary);
   color: white;
   padding: 10px 15px 10px 15px;
   position: fixed;
@@ -68,21 +68,10 @@ main {
   border-radius: 30px;
   border: 1px solid white;
   box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 24px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 }
 
-.media-info-msg {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #fe6f0f;
-}
-@media screen and (max-width: 550px) {
-  .media-info-msg {
-    display: none;
-  }
+.write-btn:hover {
+  background-color: var(--button-hover);
 }

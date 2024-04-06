@@ -1,6 +1,30 @@
 @import "./header.css";
 @import "./footer.css";
 @import "./main.css";
+
+:root {
+  --button-primary: rgb(250, 165, 0);
+  --button-hover: rgb(250, 130, 0);
+}
+
+.media-info-msg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--button-hover);
+}
+
+@media screen and (max-width: 550px) {
+  .media-info-msg {
+    display: none;
+  }
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
     "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI",
