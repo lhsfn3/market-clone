@@ -1,9 +1,11 @@
-from fastapi import FastAPI,UploadFile,Form,Request
+from fastapi import FastAPI,UploadFile,Form,Request, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse,Response
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
 from typing import Annotated
+from fastapi_login import LoginManager
+from fastapi_login.exceptions import InvalidCredentialsException
 import sqlite3 
 # sqllite3를 연결할 수 있는 라이브러리
 
@@ -23,8 +25,38 @@ cur.execute(f"""
         """)
 app = FastAPI()
 
+secret = "hi"
+manager = LoginManager(secret, "/login")
 
+@manager.user_loader()
+def query_user(data):
+    WHERE_STATEMENTS = f'id="{data}"'
+    if type(data) == dict:
+        WHERE_STATEMENTS = f'''id="{data['id']}"'''
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    user = cur.execute(f"""
+                SELECT * from users WHERE {WHERE_STATEMENTS}
+                """).fetchone()
+    return user
 
+@app.post("/login")
+def login(id:Annotated[str, Form()], 
+          password:Annotated[str, Form()]):
+    user = query_user(id)
+    if not user:
+        raise InvalidCredentialsException
+    elif password != user['password']:
+        raise InvalidCredentialsException
+    
+    access_token = manager.create_access_token(data={
+        'sub':{
+        'id': user['id'],
+        'name': user['name'],
+        'email':user['email']
+        }
+    })
+    return {'access_token':access_token}
             
 @app.post("/items")
 async def create_item(image:UploadFile,
@@ -43,7 +75,7 @@ async def create_item(image:UploadFile,
     return "200"
 
 @app.get("/items")
-async def get_items():
+async def get_items(user=Depends(manager)):
     # 컬럼명까지 가지고올수 있도록 명령어
     con.row_factory = sqlite3.Row
     # db 현재 위치는 업데이틀 랗기 위한 것
@@ -59,7 +91,7 @@ async def get_items():
 
 @app.get("/images/{item_id}")
 async def get_image(item_id):
-    cur = con.cursor();
+    cur = con.cursor()
     image_bytes = cur.execute(f"""
                               SELECT image FROM items WHERE id={item_id}
                               """).fetchone()[0]

@@ -9,7 +9,7 @@ const checkPassword = () => {
   } else return false;
 };
 
-const hadleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   const formData = new FormData(form);
   const sha256Password = sha256(formData.get("password"));
@@ -31,4 +31,4 @@ const hadleSubmit = async (e) => {
   }
 };
 
-form.addEventListener("submit", hadleSubmit);
+form.addEventListener("submit", handleSubmit);
